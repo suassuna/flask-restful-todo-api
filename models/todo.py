@@ -13,6 +13,14 @@ class TodoModel(db.Model):
         self.done = done
         self.createdAt = createdAt
 
+    def json(self):
+        return {
+            'id': self.id,
+            'description': self.description,
+            'done': self.done,
+            'createdAt': self.createdAt.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+        }
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()

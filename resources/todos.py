@@ -1,6 +1,7 @@
 from flask_restful import Resource, reqparse
 from flask import jsonify
 from datetime import datetime
+from models.todo import TodoModel
 
 class Todo(Resource):
     def __init__(self):
@@ -45,17 +46,19 @@ class TodoList(Resource):
             default=False)
         self.parser.add_argument('createdAt',
             type=lambda x: datetime.strptime(x, '%Y-%m-%dT%H:%M:%S.%fZ'),
-            default=datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
+            default=datetime.utcnow())
 
     def get(self):
-        return {'message': 'Got it!'}
+        return { 'todos': [todo.json() for todo in TodoModel.query.all()] }
 
     def post(self):
         data = self.parser.parse_args()
+        todo = TodoModel(**data)
 
-        return jsonify({
-            'message': 'added',
-            'description': data['description'],
-            'done': data['done'],
-            'createdAt': data['createdAt']
-        })
+        try:
+            todo.save_to_db()
+        except Exception as exception:
+            print(exception)
+            return { 'message' : 'An error occured inserting the item.'}, 500
+
+        return todo.json(), 201
