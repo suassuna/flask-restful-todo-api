@@ -18,21 +18,35 @@ class Todo(Resource):
             type=lambda x: datetime.strptime(x, '%Y-%m-%dT%H:%M:%S.%fZ'),
             help='This field cannot be left blank.')
 
-    def get(self, id):
-        return { 'todo': id }
+    def get(self, todo_id):
+        todo = TodoModel.find_by_id(todo_id)
 
-    def put(self, id):
-        data = self.parser.parse_args()
+        if todo:
+            return todo.json()
+        return { 'message': 'Todo not found'}, 404
 
-        return jsonify({
-            'message': 'updated',
-            'description': data['description'],
-            'done': data['done'],
-            'createdAt': data['createdAt']
-        })
+    def put(self, todo_id):
+        todo = TodoModel.find_by_id(todo_id)
 
-    def delete(self, id):
-        return { 'deleted': id }
+        if todo:
+            data = self.parser.parse_args()
+
+            todo.description = data['description']
+            todo.done = data['done']
+            todo.createdAt = data['createdAt']
+
+            todo.save_to_db()
+
+            return todo.json()
+
+        return { 'message': 'Todo not found'}, 404
+
+    def delete(self, todo_id):
+        todo = TodoModel.find_by_id(todo_id)
+
+        if todo:
+            todo.delete_from_db()
+        return { 'message': 'Todo deleted'}
 
 
 class TodoList(Resource):

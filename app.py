@@ -12,7 +12,7 @@ api = Api(app)
 def create_tables():
     db.create_all()
 
-api.add_resource(Todo, '/api/todos/<int:id>')
+api.add_resource(Todo, '/api/todos/<int:todo_id>')
 api.add_resource(TodoList, '/api/todos')
 
 db.init_app(app)
