@@ -63,7 +63,7 @@ class TodoList(Resource):
             default=datetime.utcnow())
 
     def get(self):
-        return { 'todos': [todo.json() for todo in TodoModel.query.all()] }
+        return [todo.json() for todo in TodoModel.query.all()]
 
     def post(self):
         data = self.parser.parse_args()

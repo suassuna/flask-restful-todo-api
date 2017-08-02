@@ -15,7 +15,7 @@ class TodoModel(db.Model):
 
     def json(self):
         return {
-            'id': self.id,
+            '_id': str(self.id),
             'description': self.description,
             'done': self.done,
             'createdAt': self.createdAt.strftime('%Y-%m-%dT%H:%M:%S.%fZ')

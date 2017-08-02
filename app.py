@@ -12,8 +12,15 @@ api = Api(app)
 def create_tables():
     db.create_all()
 
+@app.after_request
+def after_request(response):
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+  return response
+
 api.add_resource(Todo, '/api/todos/<int:todo_id>')
 api.add_resource(TodoList, '/api/todos')
 
 db.init_app(app)
-app.run(port=5000, debug=True)
+app.run(port=3003, debug=True)
